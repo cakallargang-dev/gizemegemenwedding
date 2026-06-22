@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+
+<html class="light" lang="tr">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>G & E - Katılımcılar</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "surface": "#fdf8f8",
+                        "on-primary": "#fff7f7",
+                        "primary-container": "#fcabb9",
+                        "surface-container-high": "#ece7e7",
+                        "surface-container-highest": "#e6e1e2",
+                        "surface-container-lowest": "#ffffff",
+                        "on-surface": "#343233",
+                        "surface-bright": "#fdf8f8",
+                        "on-primary-container": "#632a37",
+                        "primary-dim": "#7e404d",
+                        "on-secondary-container": "#4e5f44",
+                        "surface-container-low": "#f7f2f2",
+                        "surface-tint": "#8c4c59",
+                        "surface-container": "#f2eded",
+                        "primary": "#8c4c59",
+                        "on-surface-variant": "#615e5f",
+                        "outline-variant": "#b5b1b1",
+                        "on-background": "#343233"
+                    },
+                    fontFamily: {
+                        "headline": ["Noto Serif"],
+                        "body": ["Plus Jakarta Sans"],
+                        "label": ["Plus Jakarta Sans"]
+                    },
+                    borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #fdf8f8; color: #343233; -webkit-font-smoothing: antialiased; }
+        .font-serif { font-family: 'Noto Serif', serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .spinner {
+            border: 4px solid rgba(140, 76, 89, 0.1);
+            border-left-color: #8c4c59;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body class="bg-surface selection:bg-primary-container selection:text-on-primary-container">
+
+```
+<!-- Navbar -->
+<nav class="fixed top-0 w-full z-50 bg-white/70 backdrop-blur-md flex items-center px-6 py-4 shadow-sm">
+    <div class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-rose-800">favorite</span>
+        <span class="text-xl font-serif italic text-rose-800">Gizem & Egemen</span>
+    </div>
+</nav>
+
+<main class="min-h-screen pt-24 pb-20 px-4 md:px-8 max-w-5xl mx-auto space-y-6">
+    <div class="text-center mb-8">
+        <h2 class="text-4xl font-serif text-on-surface">Katılımcı Listesi</h2>
+        <p class="text-on-surface-variant mt-2 text-sm">Nişana katılım bildirimlerini buradan görüntüleyebilirsiniz.</p>
+    </div>
+
+    <!-- Sheet Seçici -->
+    <div class="flex justify-center mb-4">
+        <div class="bg-surface-container-high p-1 rounded-full inline-flex shadow-sm gap-1">
+            <button onclick="switchSheet('nisan')" id="btn-nisan" class="px-5 py-2.5 rounded-full text-sm font-bold tracking-wide transition-all bg-white text-primary shadow-sm">
+                Nişan
+            </button>
+            <button onclick="switchSheet('izmir')" id="btn-izmir" class="px-5 py-2.5 rounded-full text-sm font-bold tracking-wide transition-all text-on-surface-variant hover:text-on-surface">
+                İzmir Düğün
+            </button>
+            <button onclick="switchSheet('istanbul')" id="btn-istanbul" class="px-5 py-2.5 rounded-full text-sm font-bold tracking-wide transition-all text-on-surface-variant hover:text-on-surface">
+                İstanbul Düğün
+            </button>
+        </div>
+    </div>
+
+    <!-- Tablo Alanı -->
+    <section class="bg-white rounded-3xl shadow-xl overflow-hidden border border-zinc-100 flex flex-col h-[700px]">
+        <div class="bg-rose-50 px-6 py-3 border-b border-rose-100 flex items-center gap-2">
+            <span class="material-symbols-outlined text-rose-700">list_alt</span>
+            <h3 class="font-bold text-rose-900" id="sheet-title">Nişan Katılımcıları</h3>
+        </div>
+        <div class="flex-1 w-full relative bg-surface-container-low">
+            <div class="absolute inset-0 flex items-center justify-center flex-col text-center p-6 text-zinc-500 z-0">
+                <div class="spinner mb-4"></div>
+                <p>Tablo Yükleniyor...</p>
+                <p class="text-xs mt-2 max-w-xs">Eğer bu alan boş kalıyorsa, tablonuzun erişim iznini "Bağlantıya sahip olan herkes" yapmanız gerekebilir.</p>
+            </div>
+            <iframe id="iframe-nisan" class="absolute inset-0 w-full h-full z-10 block" src="https://docs.google.com/spreadsheets/d/13JOpyvfU7BcQDnZrx_YarRU36pbT7SpZOSqSBwy_WZE/edit?gid=1897964324&rm=minimal" frameborder="0" allowfullscreen></iframe>
+            <iframe id="iframe-izmir" class="absolute inset-0 w-full h-full z-10 hidden" src="https://docs.google.com/spreadsheets/d/1vMzr3nz9fPZPMgk05La5I_t1vKIxIcNb5NewjOQhS3g/edit?rm=minimal" frameborder="0" allowfullscreen></iframe>
+            <iframe id="iframe-istanbul" class="absolute inset-0 w-full h-full z-10 hidden" src="https://docs.google.com/spreadsheets/d/1jCmpMeKOKlOro0yWJ7JXFI4QWi35mAXNSPomI6TO4vc/edit?rm=minimal" frameborder="0" allowfullscreen></iframe>
+        </div>
+    </section>
+</main>
+
+<script>
+    const titles = {
+        nisan: 'Nişan Katılımcıları',
+        izmir: 'İzmir Düğün Katılımcıları',
+        istanbul: 'İstanbul Düğün Katılımcıları'
+    };
+
+    function switchSheet(target) {
+        ['nisan', 'izmir', 'istanbul'].forEach(id => {
+            document.getElementById('iframe-' + id).classList.add('hidden');
+            const btn = document.getElementById('btn-' + id);
+            btn.classList.remove('bg-white', 'text-primary', 'shadow-sm');
+            btn.classList.add('text-on-surface-variant');
+        });
+        document.getElementById('iframe-' + target).classList.remove('hidden');
+        const activeBtn = document.getElementById('btn-' + target);
+        activeBtn.classList.add('bg-white', 'text-primary', 'shadow-sm');
+        activeBtn.classList.remove('text-on-surface-variant');
+        document.getElementById('sheet-title').textContent = titles[target];
+    }
+</script>
+```
+
+</body>
+</html>
