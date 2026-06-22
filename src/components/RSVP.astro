@@ -1,0 +1,63 @@
+---
+interface Props {
+  event: {
+    dateLabel: string;
+    timeLabel: string;
+    venueLabel: string;
+    address: string;
+    mapUrl: string;
+  };
+  rsvp: {
+    label: string;
+    buttonText: string;
+    url: string;
+  };
+}
+
+const { event, rsvp } = Astro.props;
+---
+
+<section id="rsvp" class="info-section" aria-labelledby="rsvp-title">
+  <div class="info-grid">
+    <div class="info-card">
+      <p class="section-label">Davetiye Bilgileri</p>
+      <h2 id="rsvp-title" class="info-title">Etkinlik Bilgileri</h2>
+      <p class="info-copy">
+        Bu bölüm tasarım kararı içermeden bırakıldı. Tarih, saat, mekan ve diğer bilgiler burada canlı metin olarak güncellenir.
+      </p>
+
+      <dl class="details-grid">
+        <div class="detail-item">
+          <dt>Tarih</dt>
+          <dd>{event.dateLabel}</dd>
+        </div>
+        <div class="detail-item">
+          <dt>Saat</dt>
+          <dd>{event.timeLabel}</dd>
+        </div>
+        <div class="detail-item">
+          <dt>Mekan</dt>
+          <dd>{event.venueLabel}</dd>
+        </div>
+        <div class="detail-item">
+          <dt>Adres</dt>
+          <dd>{event.address}</dd>
+        </div>
+      </dl>
+    </div>
+
+    <aside class="info-card info-card--accent">
+      <p class="section-label">RSVP</p>
+      <p class="info-copy">{rsvp.label}</p>
+
+      <div class="cta-stack">
+        <a class="button-primary" href={rsvp.url} target="_blank" rel="noreferrer">
+          {rsvp.buttonText}
+        </a>
+        <a class="button-secondary" href={event.mapUrl} target="_blank" rel="noreferrer">
+          Haritada Aç
+        </a>
+      </div>
+    </aside>
+  </div>
+</section>

@@ -1,0 +1,20 @@
+---
+import invitation from "../content/istanbul.json";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import ScrollActor from "../components/ScrollActor.astro";
+
+const { seo } = invitation;
+---
+
+<BaseLayout title={seo.title} description={seo.description}>
+  <main id="main-content" class="canvas" style="background:#faecae;">
+    <section class="phone-scene" data-scroll-scene>
+      <div class="phone-stage">
+        <div class="phone-canvas">
+          <div class="phone-canvas__image" aria-hidden="true"></div>
+          <ScrollActor />
+        </div>
+      </div>
+    </section>
+  </main>
+</BaseLayout>

@@ -1,0 +1,44 @@
+---
+const canvasWidth = 1125;
+const canvasHeight = 2436;
+const horizontalMarks = Array.from({ length: Math.floor(canvasWidth / 100) + 1 }, (_, index) => index * 100);
+const verticalMarks = Array.from({ length: Math.floor(canvasHeight / 100) + 1 }, (_, index) => index * 100);
+---
+
+<div class="ruler-overlay" aria-hidden="true">
+  <div class="ruler-overlay__corner">0</div>
+
+  <div class="ruler-overlay__top">
+    {
+      horizontalMarks.map((value) => (
+        <span
+          class="ruler-overlay__label ruler-overlay__label--top"
+          style={`--offset:${(value / canvasWidth) * 100}%;`}
+        >
+          {value}
+        </span>
+      ))
+    }
+  </div>
+
+  <div class="ruler-overlay__left">
+    {
+      verticalMarks.map((value) => (
+        <span
+          class="ruler-overlay__label ruler-overlay__label--left"
+          style={`--offset:${(value / canvasHeight) * 100}%;`}
+        >
+          {value}
+        </span>
+      ))
+    }
+  </div>
+
+  <div class="ruler-overlay__field">
+    <div class="ruler-overlay__grid"></div>
+    <div class="ruler-overlay__center ruler-overlay__center--x"></div>
+    <div class="ruler-overlay__center ruler-overlay__center--y"></div>
+  </div>
+
+  <div class="ruler-overlay__legend">Canvas: 1125x2436 | Grid: 100px | Minor: 20px</div>
+</div>

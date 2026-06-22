@@ -1,0 +1,1323 @@
+<div class="scroll-actor" data-scroll-actor aria-hidden="true">
+  <img class="scroll-actor__image" src="/aysenur_enes.webp" alt="" />
+</div>
+
+<div class="story-loader" data-story-loader data-ready="false" data-active="true" aria-hidden="true"></div>
+
+<img class="scroll-cue" data-scroll-cue src="/down_arrow.webp" alt="" aria-hidden="true" />
+
+<img class="camera-light" data-camera-light src="/kamera_isigi.webp" alt="" aria-hidden="true" />
+<div class="camera-flash" data-camera-flash aria-hidden="true"></div>
+<audio data-story-audio preload="auto" src="/ses.mp3"></audio>
+<audio data-shutter-audio preload="auto" src="/shutter_sound.mp3"></audio>
+
+<div class="polaroid-drop" data-polaroid-drop aria-hidden="true">
+  <img class="polaroid-drop__body" src="/polaroid.webp" alt="" />
+  <img class="polaroid-drop__lens-cap" src="/kamera_kapagi.webp" alt="" />
+  <img class="polaroid-drop__card" src="/polaroid_kart.webp" alt="" />
+  <img class="polaroid-drop__photo" src="/enes_ayse_1.webp" alt="" />
+  <div class="polaroid-drop__flip polaroid-drop__flip--nikah" aria-hidden="true">
+    <img
+      class="polaroid-drop__flip-face polaroid-drop__flip-face--nikah-front"
+      src="/enes_aysenur_nikah.webp"
+      alt=""
+    />
+    <img
+      class="polaroid-drop__flip-face polaroid-drop__flip-face--nikah-back"
+      src="/nikah_adres.webp"
+      alt=""
+    />
+  </div>
+  <div class="polaroid-drop__flip polaroid-drop__flip--kina" aria-hidden="true">
+    <img
+      class="polaroid-drop__flip-face polaroid-drop__flip-face--kina-front"
+      src="/kina.webp"
+      alt=""
+    />
+    <img
+      class="polaroid-drop__flip-face polaroid-drop__flip-face--kina-back"
+      src="/kina_adres.webp"
+      alt=""
+    />
+  </div>
+  <div class="polaroid-drop__flip polaroid-drop__flip--dugun" aria-hidden="true">
+    <img
+      class="polaroid-drop__flip-face polaroid-drop__flip-face--dugun-front"
+      src="/enes_aysenur_dugun.webp"
+      alt=""
+    />
+    <img
+      class="polaroid-drop__flip-face polaroid-drop__flip-face--dugun-back"
+      src="/dugun_adres.webp"
+      alt=""
+    />
+  </div>
+  <div class="polaroid-drop__flip polaroid-drop__flip--last" aria-hidden="true">
+    <img
+      class="polaroid-drop__flip-face polaroid-drop__flip-face--last"
+      src="/last.webp"
+      alt=""
+    />
+  </div>
+  <img class="polaroid-drop__base" src="/polaroid_alt.webp" alt="" />
+</div>
+
+<script is:inline>
+  (() => {
+    window.__storyLockedCleanup?.();
+
+    const actor = document.querySelector("[data-scroll-actor]");
+    const cue = document.querySelector("[data-scroll-cue]");
+    const cameraLight = document.querySelector("[data-camera-light]");
+    const cameraFlash = document.querySelector("[data-camera-flash]");
+    const storyLoader = document.querySelector("[data-story-loader]");
+    const storyAudio = document.querySelector("[data-story-audio]");
+    const shutterAudio = document.querySelector("[data-shutter-audio]");
+    const polaroid = document.querySelector("[data-polaroid-drop]");
+    const scene = document.querySelector("[data-scroll-scene]");
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+    if (
+      !actor ||
+      !cue ||
+      !cameraLight ||
+      !cameraFlash ||
+      !storyLoader ||
+      !storyAudio ||
+      !shutterAudio ||
+      !polaroid ||
+      !scene
+    ) {
+      return;
+    }
+
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+    const lerp = (start, end, amount) => start + (end - start) * amount;
+    const mapSegment = (progress, start, end) => clamp((progress - start) / (end - start), 0, 1);
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    const flashPulse = (progress, start, end) => {
+      const amount = mapSegment(progress, start, end);
+
+      if (amount <= 0 || amount >= 1) {
+        return 0;
+      }
+
+      if (amount < 0.18) {
+        return amount / 0.18;
+      }
+
+      return 1 - clamp((amount - 0.18) / 0.82, 0, 1);
+    };
+    const centerX = 1125 / 2;
+    const actorStartX = -320;
+    const actorEntranceEnd = 0.3;
+    const actorHoldEnd = 0.42;
+    const cameraStopEnd = 0.66;
+    const lightFadeEnd = 0.78;
+    const lensCapFadeEnd = 0.82;
+    const cardRevealEnd = 0.85;
+    const photoFadeEnd = 0.88;
+    const cardExitEnd = 1;
+    const secondLightFadeEnd = 1.12;
+    const secondLensCapFadeEnd = 1.16;
+    const secondCardRevealEnd = 1.20;
+    const secondPhotoFadeEnd = 1.24;
+    const zoomRevealEnd = 1.40;
+    const flipRevealEnd = 1.56;
+    const finalExitEnd = 1.72;
+    const thirdLightFadeEnd = 1.84;
+    const thirdLensCapFadeEnd = 1.88;
+    const thirdCardRevealEnd = 1.94;
+    const thirdPhotoFadeEnd = 1.98;
+    const thirdZoomRevealEnd = 2.14;
+    const thirdFlipRevealEnd = 2.30;
+    const thirdFinalExitEnd = 2.46;
+    const fourthLightFadeEnd = 2.58;
+    const fourthLensCapFadeEnd = 2.62;
+    const fourthCardRevealEnd = 2.68;
+    const fourthPhotoFadeEnd = 2.72;
+    const fourthZoomRevealEnd = 2.88;
+    const fourthFlipRevealEnd = 3.04;
+    const fourthFinalExitEnd = 3.20;
+    const fifthLightFadeEnd = 3.32;
+    const fifthLensCapFadeEnd = 3.36;
+    const fifthCardRevealEnd = 3.42;
+    const fifthPhotoFadeEnd = 3.46;
+    const fifthZoomRevealEnd = 3.62;
+    const canvasWidth = 1125;
+    const canvasHeight = 2436;
+    const cardBaseWidth = 522;
+    const cardBaseHeight = 629;
+    const zoomEndWidth = canvasWidth - 100;
+    const zoomEndScale = zoomEndWidth / cardBaseWidth;
+    const zoomCenterTop = ((canvasHeight / 2 - cardBaseHeight / 2) / canvasHeight) * 100;
+    const stageTargets = [
+      { progress: actorHoldEnd, duration: 980 },
+      { progress: cameraStopEnd, duration: 980 },
+      { progress: cardRevealEnd, duration: 1150 },
+      { progress: photoFadeEnd, duration: 900 },
+      { progress: cardExitEnd, duration: 1850 },
+      { progress: secondCardRevealEnd, duration: 2100 },
+      { progress: secondPhotoFadeEnd, duration: 900 },
+      { progress: zoomRevealEnd, duration: 1250 },
+      { progress: flipRevealEnd, duration: 1200 },
+      { progress: finalExitEnd, duration: 1100 },
+      { progress: thirdCardRevealEnd, duration: 2100 },
+      { progress: thirdPhotoFadeEnd, duration: 900 },
+      { progress: thirdZoomRevealEnd, duration: 1250 },
+      { progress: thirdFlipRevealEnd, duration: 1200 },
+      { progress: thirdFinalExitEnd, duration: 1100 },
+      { progress: fourthCardRevealEnd, duration: 2100 },
+      { progress: fourthPhotoFadeEnd, duration: 900 },
+      { progress: fourthZoomRevealEnd, duration: 1250 },
+      { progress: fourthFlipRevealEnd, duration: 1200 },
+      { progress: fourthFinalExitEnd, duration: 1100 },
+      { progress: fifthCardRevealEnd, duration: 2100 },
+      { progress: fifthPhotoFadeEnd, duration: 900 },
+      { progress: fifthZoomRevealEnd, duration: 1250 }
+    ];
+    const wheelThreshold = 1.5;
+    const wheelUnlockDelay = 260;
+    const touchThreshold = 44;
+    const keyboardAdvanceKeys = new Set(["ArrowDown", "PageDown", " ", "Spacebar", "Enter"]);
+    const keyboardReverseKeys = new Set(["ArrowUp", "PageUp"]);
+    const shutterStageIndexes = new Set([3, 6, 11, 16, 21]);
+    const preloadImageSources = [
+      "/zemin.webp",
+      "/aysenur_enes.webp",
+      "/down_arrow.webp",
+      "/kamera_isigi.webp",
+      "/polaroid.webp",
+      "/kamera_kapagi.webp",
+      "/polaroid_kart.webp",
+      "/enes_ayse_1.webp",
+      "/enes_aysenur_nikah.webp",
+      "/nikah_adres.webp",
+      "/kina.webp",
+      "/kina_adres.webp",
+      "/enes_aysenur_dugun.webp",
+      "/dugun_adres.webp",
+      "/last.webp",
+      "/polaroid_alt.webp"
+    ];
+
+    let currentStageIndex = 0;
+    let storyProgress = 0;
+    let animationFrameId = 0;
+    let animationStartTime = 0;
+    let stageStartProgress = 0;
+    let stageTargetProgress = 0;
+    let stageDuration = 0;
+    let isAnimating = false;
+    let wheelAccumulatedDelta = 0;
+    let wheelGestureLocked = false;
+    let wheelUnlockTimeoutId = 0;
+    let touchStartY = 0;
+    let touchActive = false;
+    let assetsReady = false;
+    let storyActivated = false;
+    let storyAudioStarted = false;
+    let storyAudioPlayPending = false;
+    let storyAudioPendingTimeoutId = 0;
+    let shutterAudioPendingTimeoutId = 0;
+    let shutterAudioContext = null;
+    let shutterAudioData = null;
+    let shutterAudioDataPromise = null;
+    let shutterAudioBuffer = null;
+    let shutterAudioBufferPromise = null;
+    let shutterClickBuffer = null;
+    let shutterAudioUnlocked = false;
+    let shutterElementPrimed = false;
+    let shutterElementPrimePending = false;
+    let shutterLoopArmed = false;
+    let shutterLoopArmPending = false;
+    let shutterMuteTimeoutId = 0;
+    let earlyShutterStageIndex = 0;
+
+    const preloadImage = (src) =>
+      new Promise((resolve) => {
+        const image = new Image();
+        const finish = () => resolve();
+
+        image.addEventListener("load", finish, { once: true });
+        image.addEventListener("error", finish, { once: true });
+        image.src = src;
+      });
+
+    const getShutterAudioContext = () => {
+      if (!AudioContextClass) {
+        return null;
+      }
+
+      if (!shutterAudioContext) {
+        try {
+          shutterAudioContext = new AudioContextClass();
+        } catch {
+          return null;
+        }
+      }
+
+      return shutterAudioContext;
+    };
+
+    const resumeShutterAudioContext = (audioContext) => {
+      if (!audioContext || audioContext.state === "running") {
+        return Promise.resolve();
+      }
+
+      try {
+        const resumeResult = audioContext.resume();
+
+        if (resumeResult && typeof resumeResult.then === "function") {
+          return resumeResult.catch(() => {});
+        }
+      } catch {}
+
+      return Promise.resolve();
+    };
+
+    const loadShutterAudioData = () => {
+      if (shutterAudioData) {
+        return Promise.resolve(shutterAudioData);
+      }
+
+      if (shutterAudioDataPromise) {
+        return shutterAudioDataPromise;
+      }
+
+      shutterAudioDataPromise = fetch(shutterAudio.currentSrc || shutterAudio.src)
+        .then((response) => response.arrayBuffer())
+        .then((audioData) => {
+          shutterAudioData = audioData;
+          return audioData;
+        })
+        .catch(() => null);
+
+      return shutterAudioDataPromise;
+    };
+
+    const decodeShutterAudioBuffer = () => {
+      if (shutterAudioBuffer) {
+        return Promise.resolve(shutterAudioBuffer);
+      }
+
+      const audioContext = getShutterAudioContext();
+
+      if (!audioContext) {
+        return Promise.resolve(null);
+      }
+
+      if (shutterAudioBufferPromise) {
+        return shutterAudioBufferPromise;
+      }
+
+      shutterAudioBufferPromise = loadShutterAudioData()
+        .then((audioData) => {
+          if (!audioData) {
+            return null;
+          }
+
+          return audioContext.decodeAudioData(audioData.slice(0));
+        })
+        .then((audioBuffer) => {
+          if (!audioBuffer) {
+            return null;
+          }
+
+          shutterAudioBuffer = audioBuffer;
+          return audioBuffer;
+        })
+        .catch(() => null);
+
+      return shutterAudioBufferPromise;
+    };
+
+    const resetShutterElement = () => {
+      try {
+        shutterAudio.pause();
+        shutterAudio.currentTime = 0;
+      } catch {}
+    };
+
+    const primeShutterElement = () => {
+      if (
+        shutterLoopArmed ||
+        shutterLoopArmPending ||
+        shutterElementPrimed ||
+        shutterElementPrimePending
+      ) {
+        return;
+      }
+
+      shutterElementPrimePending = true;
+      resetShutterElement();
+      shutterAudio.muted = true;
+      shutterAudio.volume = 0;
+      shutterAudio.preload = "auto";
+
+      const playPromise = shutterAudio.play();
+
+      const finish = () => {
+        resetShutterElement();
+        shutterAudio.muted = false;
+        shutterAudio.volume = 1;
+        shutterElementPrimePending = false;
+      };
+
+      if (!playPromise) {
+        shutterElementPrimed = true;
+        finish();
+        return;
+      }
+
+      playPromise.then(() => {
+        shutterElementPrimed = true;
+      }).catch(() => {
+        shutterElementPrimed = false;
+      }).finally(finish);
+    };
+
+    const armShutterLoop = () => {
+      if (shutterLoopArmed || shutterLoopArmPending) {
+        return;
+      }
+
+      shutterLoopArmPending = true;
+      resetShutterElement();
+      shutterAudio.loop = true;
+      shutterAudio.muted = true;
+      shutterAudio.volume = 1;
+      shutterAudio.preload = "auto";
+
+      const playPromise = shutterAudio.play();
+
+      if (!playPromise) {
+        shutterLoopArmed = true;
+        shutterLoopArmPending = false;
+        return;
+      }
+
+      playPromise.then(() => {
+        shutterLoopArmed = true;
+      }).catch(() => {
+        shutterLoopArmed = false;
+      }).finally(() => {
+        shutterLoopArmPending = false;
+      });
+    };
+
+    const unlockShutterAudio = () => {
+      const audioContext = getShutterAudioContext();
+
+      if (!audioContext) {
+        return null;
+      }
+
+      if (!shutterAudioUnlocked) {
+        try {
+          const silentBuffer = audioContext.createBuffer(1, 1, audioContext.sampleRate);
+          const source = audioContext.createBufferSource();
+          source.buffer = silentBuffer;
+          source.connect(audioContext.destination);
+          source.start(0);
+          shutterAudioUnlocked = true;
+        } catch {}
+      }
+
+      resumeShutterAudioContext(audioContext);
+
+      decodeShutterAudioBuffer();
+      return audioContext;
+    };
+
+    const prepareShutterFromGesture = () => {
+      armShutterLoop();
+      primeShutterElement();
+      unlockShutterAudio();
+    };
+
+    const getShutterClickBuffer = (audioContext) => {
+      if (shutterClickBuffer) {
+        return shutterClickBuffer;
+      }
+
+      const duration = 0.28;
+      const sampleRate = audioContext.sampleRate;
+      const frameCount = Math.floor(sampleRate * duration);
+      const audioBuffer = audioContext.createBuffer(1, frameCount, sampleRate);
+      const data = audioBuffer.getChannelData(0);
+
+      for (let index = 0; index < frameCount; index += 1) {
+        const time = index / sampleRate;
+        const firstClick = time < 0.035 ? Math.exp(-time * 90) : 0;
+        const secondClick = time > 0.055 && time < 0.16
+          ? Math.exp(-(time - 0.055) * 34)
+          : 0;
+        const tail = time > 0.11 ? Math.exp(-(time - 0.11) * 18) * 0.26 : 0;
+        const snap = Math.sin(time * 2 * Math.PI * 1800) * firstClick * 0.62;
+        const clack = Math.sin(time * 2 * Math.PI * 420) * secondClick * 0.78;
+        const noise = (Math.random() * 2 - 1) * (firstClick * 0.45 + secondClick * 0.36 + tail);
+
+        data[index] = clamp(snap + clack + noise, -1, 1);
+      }
+
+      shutterClickBuffer = audioBuffer;
+      return shutterClickBuffer;
+    };
+
+    const activateStory = () => {
+      if (storyActivated) {
+        return;
+      }
+
+      storyActivated = true;
+      storyLoader.dataset.active = "false";
+      storyLoader.setAttribute("aria-hidden", "true");
+    };
+
+    const prepareAssets = async () => {
+      const tasks = [
+        ...preloadImageSources.map((src) => () => preloadImage(src)),
+        () => loadShutterAudioData()
+      ];
+      await Promise.all(tasks.map((task) => task()));
+
+      assetsReady = true;
+      storyLoader.dataset.ready = "true";
+      armShutterLoop();
+      activateStory();
+    };
+
+    const startStoryAudio = () => {
+      if (storyAudioStarted || (!storyAudio.paused && !storyAudio.ended)) {
+        storyAudioStarted = true;
+        return;
+      }
+
+      if (storyAudioPlayPending) {
+        return;
+      }
+
+      if (storyAudio.ended) {
+        storyAudio.currentTime = 0;
+      }
+
+      storyAudioPlayPending = true;
+      storyAudio.muted = false;
+      storyAudio.volume = 1;
+      window.clearTimeout(storyAudioPendingTimeoutId);
+      storyAudioPendingTimeoutId = window.setTimeout(() => {
+        storyAudioPlayPending = false;
+      }, 900);
+
+      const playPromise = storyAudio.play();
+
+      if (!playPromise) {
+        storyAudioStarted = true;
+        storyAudioPlayPending = false;
+        window.clearTimeout(storyAudioPendingTimeoutId);
+        return;
+      }
+
+      playPromise.then(() => {
+        storyAudioStarted = true;
+      }).catch(() => {
+        storyAudioStarted = false;
+      }).finally(() => {
+        storyAudioPlayPending = false;
+        window.clearTimeout(storyAudioPendingTimeoutId);
+      });
+    };
+
+    const playShutterAudio = () => {
+      window.clearTimeout(shutterAudioPendingTimeoutId);
+
+      const playArmedLoop = () => {
+        if (!shutterLoopArmed || shutterAudio.paused) {
+          return false;
+        }
+
+        window.clearTimeout(shutterMuteTimeoutId);
+
+        try {
+          shutterAudio.currentTime = 0;
+        } catch {}
+
+        shutterAudio.muted = false;
+        shutterAudio.volume = 1;
+        shutterMuteTimeoutId = window.setTimeout(() => {
+          shutterAudio.muted = true;
+        }, 850);
+        return true;
+      };
+
+      const playElementImmediately = () => {
+        resetShutterElement();
+        shutterAudio.loop = false;
+        shutterAudio.muted = false;
+        shutterAudio.volume = 1;
+        shutterAudio.preload = "auto";
+
+        const playPromise = shutterAudio.play();
+
+        if (!playPromise) {
+          return;
+        }
+
+        playPromise.catch(() => {});
+      };
+
+      const playGeneratedClick = () => {
+        const audioContext = unlockShutterAudio();
+
+        if (!audioContext) {
+          return false;
+        }
+
+        const startClick = () => {
+          const source = audioContext.createBufferSource();
+          const gain = audioContext.createGain();
+          const now = audioContext.currentTime;
+          source.buffer = getShutterClickBuffer(audioContext);
+          gain.gain.setValueAtTime(0.0001, now);
+          gain.gain.exponentialRampToValueAtTime(3.4, now + 0.006);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.28);
+          source.connect(gain);
+          gain.connect(audioContext.destination);
+          source.start(now);
+          source.stop(now + 0.3);
+        };
+
+        try {
+          if (audioContext.state === "running") {
+            startClick();
+          } else {
+            resumeShutterAudioContext(audioContext).then(startClick);
+          }
+
+          return true;
+        } catch {
+          resumeShutterAudioContext(audioContext).then(startClick);
+          return true;
+        }
+      };
+
+      const playElementFallback = () => {
+        const clip = shutterAudio.cloneNode(true);
+        const cleanup = () => {
+          window.clearTimeout(shutterAudioPendingTimeoutId);
+          clip.remove();
+        };
+
+        clip.muted = false;
+        clip.volume = 1;
+        clip.preload = "auto";
+        clip.setAttribute("aria-hidden", "true");
+        clip.style.display = "none";
+        document.body.appendChild(clip);
+
+        shutterAudioPendingTimeoutId = window.setTimeout(cleanup, 1400);
+        clip.addEventListener("ended", cleanup, { once: true });
+
+        const playPromise = clip.play();
+
+        if (!playPromise) {
+          return;
+        }
+
+        playPromise.catch(cleanup);
+      };
+
+      playArmedLoop();
+      playElementImmediately();
+      playElementFallback();
+      playGeneratedClick();
+
+      const audioContext = unlockShutterAudio();
+
+      if (!audioContext) {
+        playElementFallback();
+        return;
+      }
+
+      const playBuffer = () => {
+        if (!shutterAudioBuffer) {
+          playElementFallback();
+          return;
+        }
+
+        const source = audioContext.createBufferSource();
+        const gain = audioContext.createGain();
+        source.buffer = shutterAudioBuffer;
+        gain.gain.value = 2.1;
+        source.connect(gain);
+        gain.connect(audioContext.destination);
+        source.start(0);
+      };
+
+      const resumeAndPlay = () => {
+        if (audioContext.state === "running") {
+          playBuffer();
+          return;
+        }
+
+        try {
+          resumeShutterAudioContext(audioContext).then(playBuffer).catch(playElementFallback);
+        } catch {
+          resumeShutterAudioContext(audioContext).then(playBuffer).catch(playElementFallback);
+        }
+      };
+
+      if (shutterAudioBuffer) {
+        resumeAndPlay();
+        return;
+      }
+
+      decodeShutterAudioBuffer().then((audioBuffer) => {
+        if (audioBuffer) {
+          resumeAndPlay();
+          return;
+        }
+
+        playElementFallback();
+      }).catch(playElementFallback);
+    };
+
+    const playUpcomingShutterFromGesture = () => {
+      if (isAnimating || !assetsReady) {
+        return;
+      }
+
+      const nextStageIndex = currentStageIndex + 1;
+
+      if (
+        !shutterStageIndexes.has(nextStageIndex) ||
+        earlyShutterStageIndex === nextStageIndex
+      ) {
+        return;
+      }
+
+      prepareShutterFromGesture();
+      playShutterAudio();
+      earlyShutterStageIndex = nextStageIndex;
+    };
+
+    const applyScene = (progress) => {
+      const cardProgress = progress;
+      const cueExitProgress = mapSegment(progress, 0, actorEntranceEnd);
+
+      let actorX = centerX;
+
+      if (progress < actorEntranceEnd) {
+        actorX = lerp(actorStartX, centerX, mapSegment(progress, 0, actorEntranceEnd));
+      } else if (progress < actorHoldEnd) {
+        actorX = centerX;
+      } else {
+        actorX = lerp(centerX, 1440, mapSegment(progress, actorHoldEnd, cameraStopEnd));
+      }
+
+      let polaroidX = centerX;
+      let polaroidY = -560;
+      let polaroidCardY = 23.6;
+      let polaroidCardOpacity = 0;
+      let polaroidPhotoOpacity = 0;
+      let polaroidFlipOpacity = 0;
+      let polaroidThirdFlipOpacity = 0;
+      let polaroidFourthFlipOpacity = 0;
+      let polaroidLastFlipOpacity = 0;
+      let polaroidFrontRotate = 0;
+      let polaroidBackRotate = -90;
+      let polaroidThirdFrontRotate = 0;
+      let polaroidThirdBackRotate = -90;
+      let polaroidFourthFrontRotate = 0;
+      let polaroidFourthBackRotate = -90;
+      let polaroidCardScale = 1;
+      let polaroidCardZ = 2;
+      let polaroidShellOpacity = 1;
+      let cameraLightOpacity = 0;
+      let cameraFlashOpacity = 0;
+      let lensCapOpacity = 0;
+      let cueY = 50;
+      let cueOpacity = 1;
+
+      if (progress >= actorHoldEnd) {
+        polaroidY = lerp(-560, 800, mapSegment(progress, actorHoldEnd, cameraStopEnd));
+      }
+
+      if (progress > 0) {
+        cueY = lerp(50, -18, cueExitProgress);
+        cueOpacity = 1 - cueExitProgress;
+      }
+
+      if (progress >= cameraStopEnd && progress < lightFadeEnd) {
+        cameraLightOpacity = lerp(0, 1, mapSegment(progress, cameraStopEnd, lightFadeEnd));
+      } else if (progress >= cardExitEnd && progress < secondLightFadeEnd) {
+        cameraLightOpacity = lerp(0, 1, mapSegment(progress, cardExitEnd, secondLightFadeEnd));
+      } else if (progress > finalExitEnd && progress < thirdLightFadeEnd) {
+        cameraLightOpacity = lerp(0, 1, mapSegment(progress, finalExitEnd, thirdLightFadeEnd));
+      } else if (progress > thirdFinalExitEnd && progress < fourthLightFadeEnd) {
+        cameraLightOpacity = lerp(0, 1, mapSegment(progress, thirdFinalExitEnd, fourthLightFadeEnd));
+      } else if (progress > fourthFinalExitEnd && progress < fifthLightFadeEnd) {
+        cameraLightOpacity = lerp(0, 1, mapSegment(progress, fourthFinalExitEnd, fifthLightFadeEnd));
+      } else if (progress >= lightFadeEnd) {
+        cameraLightOpacity = 0;
+      }
+
+      if (progress >= lightFadeEnd && progress < lensCapFadeEnd) {
+        lensCapOpacity = 1 - mapSegment(progress, lightFadeEnd, lensCapFadeEnd);
+      } else if (progress >= secondLightFadeEnd && progress < secondLensCapFadeEnd) {
+        lensCapOpacity = 1 - mapSegment(progress, secondLightFadeEnd, secondLensCapFadeEnd);
+      } else if (progress >= thirdLightFadeEnd && progress < thirdLensCapFadeEnd) {
+        lensCapOpacity = 1 - mapSegment(progress, thirdLightFadeEnd, thirdLensCapFadeEnd);
+      } else if (progress >= fourthLightFadeEnd && progress < fourthLensCapFadeEnd) {
+        lensCapOpacity = 1 - mapSegment(progress, fourthLightFadeEnd, fourthLensCapFadeEnd);
+      } else if (progress >= fifthLightFadeEnd && progress < fifthLensCapFadeEnd) {
+        lensCapOpacity = 1 - mapSegment(progress, fifthLightFadeEnd, fifthLensCapFadeEnd);
+      }
+
+      if (progress >= lightFadeEnd && progress < lensCapFadeEnd) {
+        cameraFlashOpacity = flashPulse(progress, lightFadeEnd, lensCapFadeEnd) * 0.9;
+      } else if (progress >= secondLightFadeEnd && progress < secondLensCapFadeEnd) {
+        cameraFlashOpacity = flashPulse(progress, secondLightFadeEnd, secondLensCapFadeEnd) * 0.9;
+      } else if (progress >= thirdLightFadeEnd && progress < thirdLensCapFadeEnd) {
+        cameraFlashOpacity = flashPulse(progress, thirdLightFadeEnd, thirdLensCapFadeEnd) * 0.9;
+      } else if (progress >= fourthLightFadeEnd && progress < fourthLensCapFadeEnd) {
+        cameraFlashOpacity = flashPulse(progress, fourthLightFadeEnd, fourthLensCapFadeEnd) * 0.9;
+      } else if (progress >= fifthLightFadeEnd && progress < fifthLensCapFadeEnd) {
+        cameraFlashOpacity = flashPulse(progress, fifthLightFadeEnd, fifthLensCapFadeEnd) * 0.9;
+      }
+
+      if (cameraFlashOpacity > 0) {
+        cameraLightOpacity = Math.max(cameraLightOpacity, cameraFlashOpacity);
+      }
+
+      if (cardProgress >= lensCapFadeEnd && cardProgress < cardRevealEnd) {
+        polaroidCardY = lerp(23.6, 91.4667, mapSegment(cardProgress, lensCapFadeEnd, cardRevealEnd));
+        polaroidCardOpacity = 1;
+      } else if (cardProgress >= cardRevealEnd) {
+        polaroidCardY = 91.4667;
+        polaroidCardOpacity = 1;
+      }
+
+      if (cardProgress >= cardRevealEnd && cardProgress < photoFadeEnd) {
+        polaroidPhotoOpacity = Math.pow(mapSegment(cardProgress, cardRevealEnd, photoFadeEnd), 1.6);
+      } else if (cardProgress >= photoFadeEnd) {
+        polaroidPhotoOpacity = 1;
+      }
+
+      if (cardProgress >= photoFadeEnd) {
+        polaroidCardY = lerp(91.4667, 248, mapSegment(cardProgress, photoFadeEnd, cardExitEnd));
+      }
+
+      if (progress >= cardExitEnd) {
+        polaroidPhotoOpacity = 0;
+      }
+
+      if (progress >= cardExitEnd && progress < secondLensCapFadeEnd) {
+        polaroidCardOpacity = 0;
+      } else if (progress >= secondLensCapFadeEnd && progress < secondCardRevealEnd) {
+        polaroidCardY = lerp(
+          23.6,
+          91.4667,
+          mapSegment(progress, secondLensCapFadeEnd, secondCardRevealEnd)
+        );
+        polaroidCardOpacity = 1;
+      } else if (progress >= secondCardRevealEnd) {
+        polaroidCardY = 91.4667;
+        polaroidCardOpacity = 1;
+      }
+
+      if (progress >= secondCardRevealEnd && progress < secondPhotoFadeEnd) {
+        polaroidFlipOpacity = Math.pow(
+          mapSegment(progress, secondCardRevealEnd, secondPhotoFadeEnd),
+          1.6
+        );
+      } else if (progress >= secondPhotoFadeEnd) {
+        polaroidFlipOpacity = 1;
+      }
+
+      if (progress >= secondPhotoFadeEnd) {
+        polaroidCardY = lerp(
+          91.4667,
+          zoomCenterTop,
+          mapSegment(progress, secondPhotoFadeEnd, zoomRevealEnd)
+        );
+        polaroidCardScale = lerp(
+          1,
+          zoomEndScale,
+          mapSegment(progress, secondPhotoFadeEnd, zoomRevealEnd)
+        );
+        polaroidCardZ = 5;
+      }
+
+      if (progress >= zoomRevealEnd) {
+        polaroidCardOpacity = 0;
+
+        const flipProgress = mapSegment(progress, zoomRevealEnd, flipRevealEnd);
+        const frontPhase = clamp(flipProgress / 0.5, 0, 1);
+        const backPhase = clamp((flipProgress - 0.5) / 0.5, 0, 1);
+
+        polaroidFrontRotate = lerp(0, 90, frontPhase);
+        polaroidBackRotate = lerp(-90, 0, backPhase);
+      }
+
+      if (progress >= flipRevealEnd) {
+        polaroidCardY = lerp(
+          zoomCenterTop,
+          420,
+          mapSegment(progress, flipRevealEnd, finalExitEnd)
+        );
+      }
+
+      if (progress > finalExitEnd) {
+        polaroidShellOpacity = 1;
+        polaroidFlipOpacity = 0;
+        polaroidFrontRotate = 0;
+        polaroidBackRotate = -90;
+        polaroidCardScale = 1;
+        polaroidCardZ = 2;
+
+        if (progress < thirdLensCapFadeEnd) {
+          polaroidCardY = 23.6;
+          polaroidCardOpacity = 0;
+        } else if (progress < thirdCardRevealEnd) {
+          polaroidCardY = lerp(
+            23.6,
+            91.4667,
+            mapSegment(progress, thirdLensCapFadeEnd, thirdCardRevealEnd)
+          );
+          polaroidCardOpacity = 1;
+        } else {
+          polaroidCardY = 91.4667;
+          polaroidCardOpacity = 1;
+        }
+
+        if (progress >= thirdCardRevealEnd && progress < thirdPhotoFadeEnd) {
+          polaroidThirdFlipOpacity = Math.pow(
+            mapSegment(progress, thirdCardRevealEnd, thirdPhotoFadeEnd),
+            1.6
+          );
+        } else if (progress >= thirdPhotoFadeEnd) {
+          polaroidThirdFlipOpacity = 1;
+        }
+
+        if (progress >= thirdPhotoFadeEnd) {
+          polaroidCardY = lerp(
+            91.4667,
+            zoomCenterTop,
+            mapSegment(progress, thirdPhotoFadeEnd, thirdZoomRevealEnd)
+          );
+          polaroidCardScale = lerp(
+            1,
+            zoomEndScale,
+            mapSegment(progress, thirdPhotoFadeEnd, thirdZoomRevealEnd)
+          );
+          polaroidCardZ = 5;
+        }
+
+        if (progress >= thirdZoomRevealEnd) {
+          polaroidCardOpacity = 0;
+
+          const thirdFlipProgress = mapSegment(
+            progress,
+            thirdZoomRevealEnd,
+            thirdFlipRevealEnd
+          );
+          const thirdFrontPhase = clamp(thirdFlipProgress / 0.5, 0, 1);
+          const thirdBackPhase = clamp((thirdFlipProgress - 0.5) / 0.5, 0, 1);
+
+          polaroidThirdFrontRotate = lerp(0, 90, thirdFrontPhase);
+          polaroidThirdBackRotate = lerp(-90, 0, thirdBackPhase);
+        }
+
+        if (progress >= thirdFlipRevealEnd) {
+          polaroidCardY = lerp(
+            zoomCenterTop,
+            420,
+            mapSegment(progress, thirdFlipRevealEnd, thirdFinalExitEnd)
+          );
+        }
+
+        if (progress > thirdFinalExitEnd) {
+          polaroidThirdFlipOpacity = 0;
+          polaroidThirdFrontRotate = 0;
+          polaroidThirdBackRotate = -90;
+          polaroidCardScale = 1;
+          polaroidCardZ = 2;
+
+          if (progress < fourthLensCapFadeEnd) {
+            polaroidCardY = 23.6;
+            polaroidCardOpacity = 0;
+          } else if (progress < fourthCardRevealEnd) {
+            polaroidCardY = lerp(
+              23.6,
+              91.4667,
+              mapSegment(progress, fourthLensCapFadeEnd, fourthCardRevealEnd)
+            );
+            polaroidCardOpacity = 1;
+          } else {
+            polaroidCardY = 91.4667;
+            polaroidCardOpacity = 1;
+          }
+
+          if (progress >= fourthCardRevealEnd && progress < fourthPhotoFadeEnd) {
+            polaroidFourthFlipOpacity = Math.pow(
+              mapSegment(progress, fourthCardRevealEnd, fourthPhotoFadeEnd),
+              1.6
+            );
+          } else if (progress >= fourthPhotoFadeEnd) {
+            polaroidFourthFlipOpacity = 1;
+          }
+
+          if (progress >= fourthPhotoFadeEnd) {
+            polaroidCardY = lerp(
+              91.4667,
+              zoomCenterTop,
+              mapSegment(progress, fourthPhotoFadeEnd, fourthZoomRevealEnd)
+            );
+            polaroidCardScale = lerp(
+              1,
+              zoomEndScale,
+              mapSegment(progress, fourthPhotoFadeEnd, fourthZoomRevealEnd)
+            );
+            polaroidCardZ = 5;
+          }
+
+          if (progress >= fourthZoomRevealEnd) {
+            polaroidCardOpacity = 0;
+
+            const fourthFlipProgress = mapSegment(
+              progress,
+              fourthZoomRevealEnd,
+              fourthFlipRevealEnd
+            );
+            const fourthFrontPhase = clamp(fourthFlipProgress / 0.5, 0, 1);
+            const fourthBackPhase = clamp((fourthFlipProgress - 0.5) / 0.5, 0, 1);
+
+            polaroidFourthFrontRotate = lerp(0, 90, fourthFrontPhase);
+            polaroidFourthBackRotate = lerp(-90, 0, fourthBackPhase);
+          }
+
+          if (progress >= fourthFlipRevealEnd) {
+            polaroidCardY = lerp(
+              zoomCenterTop,
+              420,
+              mapSegment(progress, fourthFlipRevealEnd, fourthFinalExitEnd)
+            );
+          }
+
+          if (progress > fourthFinalExitEnd) {
+            polaroidFourthFlipOpacity = 0;
+            polaroidFourthFrontRotate = 0;
+            polaroidFourthBackRotate = -90;
+            polaroidCardScale = 1;
+            polaroidCardZ = 2;
+
+            if (progress < fifthLensCapFadeEnd) {
+              polaroidCardY = 23.6;
+              polaroidCardOpacity = 0;
+            } else if (progress < fifthCardRevealEnd) {
+              polaroidCardY = lerp(
+                23.6,
+                91.4667,
+                mapSegment(progress, fifthLensCapFadeEnd, fifthCardRevealEnd)
+              );
+              polaroidCardOpacity = 1;
+            } else {
+              polaroidCardY = 91.4667;
+              polaroidCardOpacity = 1;
+            }
+
+            if (progress >= fifthCardRevealEnd && progress < fifthPhotoFadeEnd) {
+              polaroidLastFlipOpacity = Math.pow(
+                mapSegment(progress, fifthCardRevealEnd, fifthPhotoFadeEnd),
+                1.6
+              );
+            } else if (progress >= fifthPhotoFadeEnd) {
+              polaroidLastFlipOpacity = 1;
+            }
+
+            if (progress >= fifthPhotoFadeEnd) {
+              polaroidCardY = lerp(
+                91.4667,
+                zoomCenterTop,
+                mapSegment(progress, fifthPhotoFadeEnd, fifthZoomRevealEnd)
+              );
+              polaroidCardScale = lerp(
+                1,
+                zoomEndScale,
+                mapSegment(progress, fifthPhotoFadeEnd, fifthZoomRevealEnd)
+              );
+              polaroidCardZ = 5;
+              polaroidCardOpacity = 0;
+            }
+          }
+        }
+      }
+
+      actor.style.setProperty("--actor-x", `${(actorX / 1125) * 100}%`);
+      actor.style.setProperty("--actor-y", `${(1000 / 2436) * 100}%`);
+      cue.style.setProperty("--cue-y", `${cueY}%`);
+      cue.style.setProperty("--cue-opacity", `${cueOpacity}`);
+      cameraLight.style.setProperty("--camera-light-opacity", `${cameraLightOpacity}`);
+      cameraFlash.style.setProperty("--camera-flash-opacity", `${cameraFlashOpacity}`);
+      polaroid.style.setProperty("--polaroid-x", `${(polaroidX / 1125) * 100}%`);
+      polaroid.style.setProperty("--polaroid-y", `${(polaroidY / 2436) * 100}%`);
+      polaroid.style.setProperty("--polaroid-card-y", `${polaroidCardY}%`);
+      polaroid.style.setProperty("--polaroid-card-opacity", `${polaroidCardOpacity}`);
+      polaroid.style.setProperty("--polaroid-photo-opacity", `${polaroidPhotoOpacity}`);
+      polaroid.style.setProperty("--polaroid-flip-opacity", `${polaroidFlipOpacity}`);
+      polaroid.style.setProperty("--polaroid-third-flip-opacity", `${polaroidThirdFlipOpacity}`);
+      polaroid.style.setProperty("--polaroid-fourth-flip-opacity", `${polaroidFourthFlipOpacity}`);
+      polaroid.style.setProperty("--polaroid-last-flip-opacity", `${polaroidLastFlipOpacity}`);
+      polaroid.style.setProperty("--polaroid-front-rotate", `${polaroidFrontRotate}deg`);
+      polaroid.style.setProperty("--polaroid-back-rotate", `${polaroidBackRotate}deg`);
+      polaroid.style.setProperty("--polaroid-third-front-rotate", `${polaroidThirdFrontRotate}deg`);
+      polaroid.style.setProperty("--polaroid-third-back-rotate", `${polaroidThirdBackRotate}deg`);
+      polaroid.style.setProperty("--polaroid-fourth-front-rotate", `${polaroidFourthFrontRotate}deg`);
+      polaroid.style.setProperty("--polaroid-fourth-back-rotate", `${polaroidFourthBackRotate}deg`);
+      polaroid.style.setProperty("--polaroid-card-scale", `${polaroidCardScale}`);
+      polaroid.style.setProperty("--polaroid-card-z", `${polaroidCardZ}`);
+      polaroid.style.setProperty("--polaroid-shell-opacity", `${polaroidShellOpacity}`);
+      polaroid.style.setProperty("--polaroid-lens-cap-opacity", `${lensCapOpacity}`);
+    };
+
+    const stopAnimation = () => {
+      if (!animationFrameId) {
+        return;
+      }
+
+      window.cancelAnimationFrame(animationFrameId);
+      animationFrameId = 0;
+    };
+
+    const finishStage = () => {
+      storyProgress = stageTargetProgress;
+      applyScene(storyProgress);
+      stopAnimation();
+      isAnimating = false;
+    };
+
+    const tick = (timestamp) => {
+      if (!isAnimating) {
+        animationFrameId = 0;
+        return;
+      }
+
+      const elapsed = timestamp - animationStartTime;
+      const progress = clamp(elapsed / stageDuration, 0, 1);
+      storyProgress = lerp(stageStartProgress, stageTargetProgress, progress);
+      applyScene(storyProgress);
+
+      if (progress >= 1) {
+        finishStage();
+        return;
+      }
+
+      animationFrameId = window.requestAnimationFrame(tick);
+    };
+
+    const animateToStage = (stageIndex) => {
+      const nextStage = stageTargets[stageIndex - 1];
+
+      if (!nextStage || isAnimating) {
+        return;
+      }
+
+      currentStageIndex = stageIndex;
+      stageStartProgress = storyProgress;
+      stageTargetProgress = nextStage.progress;
+      stageDuration = nextStage.duration;
+      animationStartTime = performance.now();
+      isAnimating = true;
+      stopAnimation();
+      animationFrameId = window.requestAnimationFrame(tick);
+    };
+
+    const queueStage = (direction) => {
+      if (isAnimating || !assetsReady) {
+        return;
+      }
+
+      const nextStageIndex = clamp(currentStageIndex + direction, 0, stageTargets.length);
+
+      if (nextStageIndex === currentStageIndex) {
+        return;
+      }
+
+      if (direction > 0) {
+        prepareShutterFromGesture();
+
+        if (shutterStageIndexes.has(nextStageIndex)) {
+          if (earlyShutterStageIndex !== nextStageIndex) {
+            playShutterAudio();
+          }
+
+          earlyShutterStageIndex = 0;
+        }
+
+        if (currentStageIndex === 0) {
+          startStoryAudio();
+        }
+      } else {
+        earlyShutterStageIndex = 0;
+      }
+
+      animateToStage(nextStageIndex);
+    };
+
+    const releaseWheelGesture = () => {
+      wheelGestureLocked = false;
+      wheelAccumulatedDelta = 0;
+    };
+
+    const scheduleWheelUnlock = () => {
+      window.clearTimeout(wheelUnlockTimeoutId);
+      wheelUnlockTimeoutId = window.setTimeout(releaseWheelGesture, wheelUnlockDelay);
+    };
+
+    const handleWheel = (event) => {
+      event.preventDefault();
+
+      if (!assetsReady) {
+        return;
+      }
+
+      if (Math.abs(event.deltaY) < 0.5) {
+        return;
+      }
+
+      if (event.deltaY > 0) {
+        prepareShutterFromGesture();
+
+        if (currentStageIndex === 0) {
+          startStoryAudio();
+        }
+      }
+
+      wheelAccumulatedDelta += event.deltaY;
+
+      if (!wheelGestureLocked && Math.abs(wheelAccumulatedDelta) >= wheelThreshold) {
+        wheelGestureLocked = true;
+        queueStage(wheelAccumulatedDelta > 0 ? 1 : -1);
+      }
+
+      scheduleWheelUnlock();
+    };
+
+    const handleKeydown = (event) => {
+      if (!assetsReady) {
+        if (keyboardAdvanceKeys.has(event.key) || keyboardReverseKeys.has(event.key)) {
+          event.preventDefault();
+        }
+        return;
+      }
+
+      if (keyboardAdvanceKeys.has(event.key)) {
+        event.preventDefault();
+        prepareShutterFromGesture();
+
+        if (currentStageIndex === 0) {
+          startStoryAudio();
+        }
+
+        queueStage(1);
+      } else if (keyboardReverseKeys.has(event.key)) {
+        event.preventDefault();
+        queueStage(-1);
+      }
+    };
+
+    const handleTouchStart = (event) => {
+      if (assetsReady) {
+        prepareShutterFromGesture();
+        playUpcomingShutterFromGesture();
+      }
+
+      if (assetsReady && currentStageIndex === 0) {
+        startStoryAudio();
+      }
+
+      if (event.touches.length !== 1) {
+        touchActive = false;
+        return;
+      }
+
+      touchActive = true;
+      touchStartY = event.touches[0].clientY;
+    };
+
+    const handleTouchMove = (event) => {
+      if (touchActive) {
+        event.preventDefault();
+      }
+    };
+
+    const handleTouchEnd = (event) => {
+      if (!touchActive) {
+        return;
+      }
+
+      const touch = event.changedTouches[0];
+      const deltaY = touchStartY - touch.clientY;
+      touchActive = false;
+
+      if (Math.abs(deltaY) < touchThreshold) {
+        earlyShutterStageIndex = 0;
+        return;
+      }
+
+      if (assetsReady && deltaY > 0) {
+        prepareShutterFromGesture();
+
+        if (currentStageIndex === 0) {
+          startStoryAudio();
+        }
+      }
+
+      queueStage(deltaY > 0 ? 1 : -1);
+    };
+
+    const handlePointerDown = () => {
+      if (assetsReady) {
+        prepareShutterFromGesture();
+        playUpcomingShutterFromGesture();
+      }
+    };
+
+    const cleanup = () => {
+      stopAnimation();
+      window.clearTimeout(wheelUnlockTimeoutId);
+      window.clearTimeout(storyAudioPendingTimeoutId);
+      window.clearTimeout(shutterAudioPendingTimeoutId);
+      window.clearTimeout(shutterMuteTimeoutId);
+      window.removeEventListener("wheel", handleWheel);
+      window.removeEventListener("keydown", handleKeydown);
+      window.removeEventListener("touchstart", handleTouchStart);
+      window.removeEventListener("touchmove", handleTouchMove);
+      window.removeEventListener("touchend", handleTouchEnd);
+      window.removeEventListener("pointerdown", handlePointerDown);
+      document.documentElement.classList.remove("story-locked");
+      document.body.classList.remove("story-locked");
+      delete window.__storyLockedCleanup;
+    };
+
+    applyScene(storyProgress);
+    prepareAssets();
+
+    if (prefersReducedMotion.matches) {
+      return;
+    }
+
+    window.__storyLockedCleanup = cleanup;
+    document.documentElement.classList.add("story-locked");
+    document.body.classList.add("story-locked");
+
+    window.addEventListener("wheel", handleWheel, { passive: false });
+    window.addEventListener("keydown", handleKeydown);
+    window.addEventListener("touchstart", handleTouchStart, { passive: true });
+    window.addEventListener("touchmove", handleTouchMove, { passive: false });
+    window.addEventListener("touchend", handleTouchEnd, { passive: true });
+    window.addEventListener("pointerdown", handlePointerDown, { passive: true });
+  })();
+</script>

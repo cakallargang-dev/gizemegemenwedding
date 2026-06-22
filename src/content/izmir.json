@@ -1,0 +1,55 @@
+{
+  "seo": {
+    "title": "Gizem & Egemen | İzmir Düğün Davetiyesi",
+    "description": "Gizem ve Egemen'in İzmir'deki düğününe davetlisiniz."
+  },
+  "couple": {
+    "headline": "Gizem & Egemen",
+    "subheadline": "Birlikte yeni bir hayata yelken açıyoruz",
+    "summary": "Bu özel günümüzde sizleri de aramızda görmekten mutluluk duyarız."
+  },
+  "event": {
+    "dateLabel": "Tarih buraya",
+    "timeLabel": "Saat buraya",
+    "venueLabel": "Mekan buraya, İzmir",
+    "address": "Adres buraya",
+    "mapUrl": "https://maps.google.com/?q=İzmir"
+  },
+  "rsvp": {
+    "label": "Katılım durumunuzu en kısa sürede paylaşabilirseniz çok seviniriz.",
+    "buttonText": "Katılım Bildir",
+    "url": "#"
+  },
+  "scenes": [
+    {
+      "id": "scene-01",
+      "eyebrow": "İzmir",
+      "title": "Ege'nin incisinde buluşuyoruz",
+      "description": "Sıcak bir yaz akşamında, İzmir'in eşsiz manzarası eşliğinde.",
+      "body": "",
+      "align": "start",
+      "pin": false,
+      "layers": []
+    },
+    {
+      "id": "scene-02",
+      "eyebrow": "Nikah",
+      "title": "Hayatımızın en güzel anına tanıklık edin",
+      "description": "Sevgiyle başlayan bu yolculukta ilk adımımızı birlikte atıyoruz.",
+      "body": "",
+      "align": "center", 
+      "pin": false,
+      "layers": []
+    },
+    {
+      "id": "scene-03",
+      "eyebrow": "Kutlama",
+      "title": "Dans, müzik ve bolca kahkaha",
+      "description": "Gecenin ilerleyen saatlerinde doyasıya eğleneceğiz.",
+      "body": "",
+      "align": "end",
+      "pin": false,
+      "layers": []
+    }
+  ]
+}
