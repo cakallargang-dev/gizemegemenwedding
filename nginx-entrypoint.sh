@@ -1,5 +1,6 @@
 #!/bin/sh
-PORT=***:-80}
+PORT=80
+[ -n "$PORT" ] && PORT="$PORT"
 cat > /etc/nginx/conf.d/default.conf << EOF
 server {
     listen $PORT;

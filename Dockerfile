@@ -1,8 +1,6 @@
 FROM nginx:alpine
 RUN rm -rf /usr/share/nginx/html/*
 COPY . /usr/share/nginx/html/
-COPY nginx-entrypoint.sh /
-RUN chmod +x /nginx-entrypoint.sh
-EXPOSE 80
-ENTRYPOINT ["/nginx-entrypoint.sh"]
+RUN echo 'server { listen 8080; root /usr/share/nginx/html; index nisan.html; try_files $uri $uri.html $uri/ =404; }' > /etc/nginx/conf.d/default.conf
+EXPOSE 8080
 CMD ["nginx", "-g", "daemon off;"]
